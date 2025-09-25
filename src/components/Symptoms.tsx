@@ -2,6 +2,7 @@ import { useState } from "react";
 import type { ISymptom } from "../types";
 import { FaExclamationTriangle } from "react-icons/fa";
 import Stepper from "./Stepper";
+import { motion } from "motion/react";
 
 interface SymptomsProps {
   nextStep: () => void;
@@ -88,7 +89,12 @@ const Symptoms = ({
   };
 
   return (
-    <div className="font-body">
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      className="font-body"
+    >
       <Stepper currentStep={3} steps={steps} />
       <h2 className="text-2xl font-bold mb-4 font-heading">
         Symptom Assessment
@@ -171,7 +177,7 @@ const Symptoms = ({
           Next
         </button>
       </div>
-    </div>
+    </motion.div>
   );
 };
 

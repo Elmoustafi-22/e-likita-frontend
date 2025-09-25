@@ -1,4 +1,5 @@
 import Stepper from "./Stepper";
+import { motion } from "motion/react";
 
 interface IntroductionProps {
   nextStep: () => void;
@@ -14,7 +15,12 @@ const steps = [
 
 const Introduction = ({ nextStep }: IntroductionProps) => {
   return (
-    <div className="font-body">
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      className="font-body"
+    >
       <Stepper currentStep={1} steps={steps} />
       <h2 className="text-2xl font-bold mb-4 font-heading">
         Welcome to e-Likita Hospital Consultation Assistant
@@ -47,7 +53,7 @@ const Introduction = ({ nextStep }: IntroductionProps) => {
           Next
         </button>
       </div>
-    </div>
+    </motion.div>
   );
 };
 

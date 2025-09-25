@@ -1,6 +1,7 @@
 import { useState } from "react";
 import type { IPatient } from "../types";
 import Stepper from "./Stepper";
+import { motion } from "motion/react";
 
 interface PatientInfoProps {
   nextStep: () => void;
@@ -77,7 +78,11 @@ const PatientInfo = ({
   };
 
   return (
-    <div>
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+    >
       <Stepper currentStep={2} steps={steps} />
       <h2 className="text-2xl font-bold font-heading mb-4">Patient Information</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 font-body">
@@ -183,7 +188,7 @@ const PatientInfo = ({
           Next
         </button>
       </div>
-    </div>
+    </motion.div>
   );
 };
 

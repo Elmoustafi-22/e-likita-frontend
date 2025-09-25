@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { getConsultationSummary } from "../utils/api";
 import type { IConsultation } from "../types";
 import Stepper from "./Stepper";
+import { motion } from "motion/react";
 
 interface SummaryProps {
   prevStep: () => void;
@@ -20,14 +21,18 @@ const steps = [
 const Summary = ({ prevStep, consultationId, setStep }: SummaryProps) => {
   const [summary, setSummary] = useState<IConsultation | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
     const fetchSummary = async () => {
       try {
+        setLoading(true);
+        setError(false);
         const data = await getConsultationSummary(consultationId);
         setSummary(data);
       } catch (error) {
         console.error("Failed to fetch summary", error);
+        setError(true);
       } finally {
         setLoading(false);
       }
@@ -39,22 +44,36 @@ const Summary = ({ prevStep, consultationId, setStep }: SummaryProps) => {
     return (
       <div>
         <Stepper currentStep={5} steps={steps} isFinished={false} />
-        <div className="font-body">Loading...</div>
+        <div className="font-body text-center p-8">Loading Summary...</div>
       </div>
     );
   }
 
-  if (!summary) {
+  if (error || !summary) {
     return (
-      <div>
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
         <Stepper currentStep={5} steps={steps} isFinished={false} />
-        <div className="font-body">Failed to load summary.</div>
-      </div>
+        <div className="text-center p-8">
+          <h3 className="text-xl font-bold text-red-600 mb-4">Failed to Load Summary</h3>
+          <p className="text-gray-600 mb-6">There was a network error. Please check your connection and try again later.</p>
+          <button
+            onClick={() => setStep(1)}
+            className="bg-blue-500 text-white px-6 py-2 rounded-lg font-body hover:bg-blue-600"
+          >
+            Go Back Home
+          </button>
+        </div>
+      </motion.div>
     );
   }
 
   return (
-    <div className="font-body">
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      className="font-body"
+    >
       <Stepper currentStep={5} steps={steps} isFinished={!loading && !!summary} />
       <h2 className="text-2xl font-bold mb-4 font-heading">Consultation Summary</h2>
       
@@ -145,7 +164,7 @@ const Summary = ({ prevStep, consultationId, setStep }: SummaryProps) => {
           </button>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 };
 

@@ -2,6 +2,7 @@ import { useState } from "react";
 import { createPatient, createConsultation } from "../utils/api";
 import type { IPatient, ISymptom, IFollowUp } from "../types";
 import Stepper from "./Stepper";
+import { motion } from "motion/react";
 
 interface FollowUpsProps {
   nextStep: () => void;
@@ -142,59 +143,72 @@ const FollowUps = ({
   };
 
   return (
-    <div className="font-body">
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      className="font-body"
+    >
       <Stepper currentStep={4} steps={steps} />
       <h2 className="text-2xl font-bold mb-4 font-heading">Follow-up Questions</h2>
-      {loading && <p>Submitting data, please wait...</p>}
-
-      {relevantSymptoms.length > 0 ? (
-        relevantSymptoms.map(symptom => {
-          const config = followUpConfig[symptom];
-          return (
-            <div key={config.title} className="mb-6 p-4 border rounded-lg">
-              <h3 className="font-bold mb-2 font-heading">Questions about: {config.title}</h3>
-              {config.questions.map(q => (
-                <div key={q.key} className="mb-4">
-                  <p>{q.text}</p>
-                  <div className="flex flex-col">
-                    {q.options.map((option: string) => (
-                      <label key={option} className="flex items-center">
-                        <input
-                          type="radio"
-                          name={`${config.title}-${q.key}`}
-                          value={option}
-                          onChange={(e) => handleAnswerChange(config.title, q.key, e.target.value)}
-                          className="mr-2"
-                        />
-                        {option}
-                      </label>
-                    ))}
-                  </div>
-                </div>
-              ))}
-            </div>
-          );
-        })
+      
+      {loading ? (
+        <div className="flex flex-col items-center justify-center p-8">
+          <div className="w-12 h-12 border-4 border-t-blue-500 border-gray-200 rounded-full animate-spin"></div>
+          <p className="text-gray-600 text-lg mt-4">Submitting data, please wait...</p>
+        </div>
       ) : (
-        <p>No specific follow-up questions are needed for the selected symptoms. Click Next to proceed.</p>
-      )}
+        <>
+          {relevantSymptoms.length > 0 ? (
+            relevantSymptoms.map(symptom => {
+              const config = followUpConfig[symptom];
+              return (
+                <div key={config.title} className="mb-6 p-4 border rounded-lg">
+                  <h3 className="font-bold mb-2 font-heading">Questions about: {config.title}</h3>
+                  {config.questions.map(q => (
+                    <div key={q.key} className="mb-4">
+                      <p>{q.text}</p>
+                      <div className="flex flex-col">
+                        {q.options.map((option: string) => (
+                          <label key={option} className="flex items-center">
+                            <input
+                              type="radio"
+                              name={`${config.title}-${q.key}`}
+                              value={option}
+                              onChange={(e) => handleAnswerChange(config.title, q.key, e.target.value)}
+                              className="mr-2"
+                            />
+                            {option}
+                          </label>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              );
+            })
+          ) : (
+            <p>No specific follow-up questions are needed for the selected symptoms. Click Next to proceed.</p>
+          )}
 
-      <div className="flex flex-col md:flex-row justify-between mt-8">
-        <button
-          onClick={prevStep}
-          className="bg-gray-300 text-black px-4 py-2 rounded-lg font-body mb-2 md:mb-0"
-        >
-          Back
-        </button>
-        <button
-          onClick={handleNext}
-          className="bg-blue-500 text-white px-4 py-2 rounded-lg font-body"
-          disabled={loading}
-        >
-          {loading ? "Submitting..." : "Next"}
-        </button>
-      </div>
-    </div>
+          <div className="flex flex-col md:flex-row justify-between mt-8">
+            <button
+              onClick={prevStep}
+              className="bg-gray-300 text-black px-4 py-2 rounded-lg font-body mb-2 md:mb-0"
+            >
+              Back
+            </button>
+            <button
+              onClick={handleNext}
+              className="bg-blue-500 text-white px-4 py-2 rounded-lg font-body"
+              disabled={loading}
+            >
+              {loading ? "Submitting..." : "Next"}
+            </button>
+          </div>
+        </>
+      )}
+    </motion.div>
   );
 };
 
