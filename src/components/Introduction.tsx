@@ -1,10 +1,21 @@
+import Stepper from "./Stepper";
+
 interface IntroductionProps {
   nextStep: () => void;
 }
 
+const steps = [
+  "Introduction",
+  "Patient Info",
+  "Symptoms",
+  "Follow-up",
+  "Summary",
+];
+
 const Introduction = ({ nextStep }: IntroductionProps) => {
   return (
     <div className="font-body">
+      <Stepper currentStep={1} steps={steps} />
       <h2 className="text-2xl font-bold mb-4 font-heading">
         Welcome to e-Likita Hospital Consultation Assistant
       </h2>

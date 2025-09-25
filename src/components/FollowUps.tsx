@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { createPatient, createConsultation } from "../utils/api";
 import type { IPatient, ISymptom, IFollowUp } from "../types";
+import Stepper from "./Stepper";
 
 interface FollowUpsProps {
   nextStep: () => void;
@@ -11,6 +12,69 @@ interface FollowUpsProps {
   setConsultationId: (id: string) => void;
 }
 
+const steps = [
+  "Introduction",
+  "Patient Info",
+  "Symptoms",
+  "Follow-up",
+  "Summary",
+];
+
+// Configuration for symptom-specific follow-up questions
+const followUpConfig: Record<string, { title: string; questions: any[] }> = {
+  "Abdominal Pain": {
+    title: "Abdominal Pain",
+    questions: [
+      {
+        text: "Where is the pain located?",
+        key: "location",
+        options: ["upper-right", "upper-left", "lower-right", "lower-left", "center"],
+        type: "radio",
+      },
+      {
+        text: "How would you describe the pain?",
+        key: "description",
+        options: ["cramping", "sharp", "dull", "burning"],
+        type: "radio",
+      },
+    ],
+  },
+  "Severe Headache": {
+    title: "Severe Headache",
+    questions: [
+      {
+        text: "Where is the headache located?",
+        key: "location",
+        options: ["forehead", "temples", "back of head", "all over"],
+        type: "radio",
+      },
+      {
+        text: "How would you describe the headache?",
+        key: "description",
+        options: ["throbbing", "dull ache", "sharp/stabbing", "pressure"],
+        type: "radio",
+      },
+    ],
+  },
+  "Chest Pain": {
+    title: "Chest Pain",
+    questions: [
+        {
+            text: "Where is the pain located?",
+            key: "location",
+            options: ["center", "left-side", "right-side", "radiates to arm/jaw"],
+            type: "radio",
+        },
+        {
+            text: "How would you describe the pain?",
+            key: "description",
+            options: ["pressure/tightness", "sharp", "burning", "dull ache"],
+            type: "radio",
+        }
+    ]
+  }
+};
+
 const FollowUps = ({
   nextStep,
   prevStep,
@@ -19,19 +83,35 @@ const FollowUps = ({
   symptomsData,
   setConsultationId,
 }: FollowUpsProps) => {
-  const [painLocation, setPainLocation] = useState("");
-  const [painDescription, setPainDescription] = useState("");
+  const [followUpAnswers, setFollowUpAnswers] = useState<Record<string, Record<string, string>>>({});
   const [loading, setLoading] = useState(false);
+
+  const relevantSymptoms = symptomsData.symptoms?.filter(symptom => followUpConfig[symptom]) || [];
+
+  const handleAnswerChange = (symptomTitle: string, questionKey: string, value: string) => {
+    setFollowUpAnswers(prev => ({
+        ...prev,
+        [symptomTitle]: {
+            ...prev[symptomTitle],
+            [questionKey]: value,
+        }
+    }));
+  };
 
   const handleNext = async () => {
     setLoading(true);
-    const followUpsData = [
-      {
-        question: "Abdominal Pain",
-        answer: `Location: ${painLocation}, Description: ${painDescription}`,
-      },
-    ];
-    setFollowUpsData(followUpsData);
+
+    const formattedFollowUps = Object.entries(followUpAnswers).map(([symptom, answers]) => {
+        const answerString = Object.entries(answers)
+            .map(([key, value]) => `${key.charAt(0).toUpperCase() + key.slice(1)}: ${value}`)
+            .join(', ');
+        return {
+            question: symptom,
+            answer: answerString,
+        };
+    });
+
+    setFollowUpsData(formattedFollowUps);
 
     try {
       const patient = await createPatient(patientData);
@@ -48,8 +128,9 @@ const FollowUps = ({
         ],
         painLevel: symptomsData.severity,
         additionalDetails: symptomsData.additionalDetails,
+        followUps: formattedFollowUps, // Include follow-up data in the consultation
       };
-      console.log(consultationData)
+
       const consultation = await createConsultation(consultationData);
       setConsultationId(consultation._id);
       nextStep();
@@ -62,113 +143,46 @@ const FollowUps = ({
 
   return (
     <div className="font-body">
+      <Stepper currentStep={4} steps={steps} />
       <h2 className="text-2xl font-bold mb-4 font-heading">Follow-up Questions</h2>
-      <h3 className="font-bold mb-2 font-heading">Questions about: Abdominal Pain</h3>
       {loading && <p>Submitting data, please wait...</p>}
-      <div className="mb-4">
-        <p>Where is the pain located?</p>
-        <div className="flex flex-col">
-          <label className="flex items-center">
-            <input
-              type="radio"
-              name="painLocation"
-              value="upper-right"
-              onChange={(e) => setPainLocation(e.target.value)}
-              className="mr-2"
-            />
-            upper-right
-          </label>
-          <label className="flex items-center">
-            <input
-              type="radio"
-              name="painLocation"
-              value="upper-left"
-              onChange={(e) => setPainLocation(e.target.value)}
-              className="mr-2"
-            />
-            upper-left
-          </label>
-          <label className="flex items-center">
-            <input
-              type="radio"
-              name="painLocation"
-              value="lower-right"
-              onChange={(e) => setPainLocation(e.target.value)}
-              className="mr-2"
-            />
-            lower-right
-          </label>
-          <label className="flex items-center">
-            <input
-              type="radio"
-              name="painLocation"
-              value="lower-left"
-              onChange={(e) => setPainLocation(e.target.value)}
-              className="mr-2"
-            />
-            lower-left
-          </label>
-          <label className="flex items-center">
-            <input
-              type="radio"
-              name="painLocation"
-              value="center"
-              onChange={(e) => setPainLocation(e.target.value)}
-              className="mr-2"
-            />
-            center
-          </label>
-        </div>
-      </div>
-      <div>
-        <p>How would you describe the pain?</p>
-        <div className="flex flex-col">
-          <label className="flex items-center">
-            <input
-              type="radio"
-              name="painDescription"
-              value="cramping"
-              onChange={(e) => setPainDescription(e.target.value)}
-              className="mr-2"
-            />
-            cramping
-          </label>
-          <label className="flex items-center">
-            <input
-              type="radio"
-              name="painDescription"
-              value="sharp"
-              onChange={(e) => setPainDescription(e.target.value)}
-              className="mr-2"
-            />
-            sharp
-          </label>
-          <label className="flex items-center">
-            <input
-              type="radio"
-              name="painDescription"
-              value="dull"
-              onChange={(e) => setPainDescription(e.target.value)}
-              className="mr-2"
-            />
-            dull
-          </label>
-          <label className="flex items-center">
-            <input
-              type="radio"
-              name="painDescription"
-              value="burning"
-              onChange={(e) => setPainDescription(e.target.value)}
-              className="mr-2"
-            />
-            burning
-          </label>
-        </div>
-      </div>
-      <div className="flex justify-between mt-8">
+
+      {relevantSymptoms.length > 0 ? (
+        relevantSymptoms.map(symptom => {
+          const config = followUpConfig[symptom];
+          return (
+            <div key={config.title} className="mb-6 p-4 border rounded-lg">
+              <h3 className="font-bold mb-2 font-heading">Questions about: {config.title}</h3>
+              {config.questions.map(q => (
+                <div key={q.key} className="mb-4">
+                  <p>{q.text}</p>
+                  <div className="flex flex-col">
+                    {q.options.map((option: string) => (
+                      <label key={option} className="flex items-center">
+                        <input
+                          type="radio"
+                          name={`${config.title}-${q.key}`}
+                          value={option}
+                          onChange={(e) => handleAnswerChange(config.title, q.key, e.target.value)}
+                          className="mr-2"
+                        />
+                        {option}
+                      </label>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          );
+        })
+      ) : (
+        <p>No specific follow-up questions are needed for the selected symptoms. Click Next to proceed.</p>
+      )}
+
+      <div className="flex flex-col md:flex-row justify-between mt-8">
         <button
           onClick={prevStep}
-          className="bg-gray-300 text-black px-4 py-2 rounded-lg font-body"
+          className="bg-gray-300 text-black px-4 py-2 rounded-lg font-body mb-2 md:mb-0"
         >
           Back
         </button>

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import type { IPatient } from "../types";
+import Stepper from "./Stepper";
 
 interface PatientInfoProps {
   nextStep: () => void;
@@ -7,6 +8,14 @@ interface PatientInfoProps {
   patientData: Omit<IPatient, '_id'>;
   setPatientData: (data: Omit<IPatient, '_id'>) => void;
 }
+
+const steps = [
+  "Introduction",
+  "Patient Info",
+  "Symptoms",
+  "Follow-up",
+  "Summary",
+];
 
 const PatientInfo = ({
   nextStep,
@@ -69,9 +78,10 @@ const PatientInfo = ({
 
   return (
     <div>
+      <Stepper currentStep={2} steps={steps} />
       <h2 className="text-2xl font-bold font-heading mb-4">Patient Information</h2>
-      <div className="grid grid-cols-2 gap-4 font-body">
-        <div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 font-body">
+        <div className="md:col-span-1">
           <label className="block mb-2">Full Name</label>
           <input
             type="text"
@@ -83,7 +93,7 @@ const PatientInfo = ({
           />
           {errors.fullName && <p className="text-red-500 text-sm mt-1">{errors.fullName}</p>}
         </div>
-        <div>
+        <div className="md:col-span-1">
           <label className="block mb-2">Age</label>
           <input
             title="number"
@@ -95,7 +105,7 @@ const PatientInfo = ({
           />
           {errors.age && <p className="text-red-500 text-sm mt-1">{errors.age}</p>}
         </div>
-        <div>
+        <div className="md:col-span-1">
           <label className="block mb-2">Gender</label>
           <select
             title="gender"
@@ -111,7 +121,7 @@ const PatientInfo = ({
           </select>
           {errors.gender && <p className="text-red-500 text-sm mt-1">{errors.gender}</p>}
         </div>
-        <div>
+        <div className="md:col-span-1">
           <label className="block mb-2">Phone Number</label>
           <input
             title="Phone number"
@@ -123,9 +133,9 @@ const PatientInfo = ({
           />
           {errors.phone && <p className="text-red-500 text-sm mt-1">{errors.phone}</p>}
         </div>
-        <div className="col-span-2">
+        <div className="col-span-1 md:col-span-2">
           <label className="block mb-2">Medical History</label>
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             {[
               "Diabetes",
               "High Blood Pressure",
@@ -148,7 +158,7 @@ const PatientInfo = ({
             ))}
           </div>
         </div>
-        <div className="col-span-2">
+        <div className="col-span-1 md:col-span-2">
           <label className="block mb-2">Current Medications</label>
           <textarea
             title="current medications"
@@ -159,10 +169,10 @@ const PatientInfo = ({
           ></textarea>
         </div>
       </div>
-      <div className="flex justify-between mt-8">
+      <div className="flex flex-col md:flex-row justify-between mt-8">
         <button
           onClick={prevStep}
-          className="bg-gray-300 text-black px-4 py-2 rounded-lg font-body"
+          className="bg-gray-300 text-black px-4 py-2 rounded-lg font-body mb-2 md:mb-0"
         >
           Back
         </button>

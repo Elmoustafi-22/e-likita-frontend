@@ -1,12 +1,21 @@
 import { useEffect, useState } from "react";
 import { getConsultationSummary } from "../utils/api";
 import type { IConsultation } from "../types";
+import Stepper from "./Stepper";
 
 interface SummaryProps {
   prevStep: () => void;
   consultationId: string;
   setStep: (step: number) => void;
 }
+
+const steps = [
+  "Introduction",
+  "Patient Info",
+  "Symptoms",
+  "Follow-up",
+  "Summary",
+];
 
 const Summary = ({ prevStep, consultationId, setStep }: SummaryProps) => {
   const [summary, setSummary] = useState<IConsultation | null>(null);
@@ -27,98 +36,104 @@ const Summary = ({ prevStep, consultationId, setStep }: SummaryProps) => {
   }, [consultationId]);
 
   if (loading) {
-    return <div className="font-body">Loading...</div>;
+    return (
+      <div>
+        <Stepper currentStep={5} steps={steps} isFinished={false} />
+        <div className="font-body">Loading...</div>
+      </div>
+    );
   }
 
   if (!summary) {
-    return <div className="font-body">Failed to load summary.</div>;
+    return (
+      <div>
+        <Stepper currentStep={5} steps={steps} isFinished={false} />
+        <div className="font-body">Failed to load summary.</div>
+      </div>
+    );
   }
 
   return (
     <div className="font-body">
+      <Stepper currentStep={5} steps={steps} isFinished={!loading && !!summary} />
       <h2 className="text-2xl font-bold mb-4 font-heading">Consultation Summary</h2>
+      
+      {/* Patient Information */}
       <div className="bg-gray-100 p-4 rounded-lg mb-4">
         <h3 className="font-bold mb-2 font-heading">Patient Information</h3>
-        <p>
-          <strong>Name:</strong> {summary.patient.fullName}
-        </p>
-        <p>
-          <strong>Age:</strong> {summary.patient.age}
-        </p>
-        <p>
-          <strong>Gender:</strong> {summary.patient.gender}
-        </p>
-        <p>
-          <strong>Phone:</strong> {summary.patient.phone}
-        </p>
-        <p>
-          <strong>Medical History:</strong> {summary.patient.medicalHistory?.map((s) => s).join(", ") || "None"}
-        </p>
+        <p><strong>Name:</strong> {summary.patient.fullName}</p>
+        <p><strong>Age:</strong> {summary.patient.age}</p>
+        <p><strong>Gender:</strong> {summary.patient.gender}</p>
+        <p><strong>Phone:</strong> {summary.patient.phone}</p>
+        <p><strong>Medical History:</strong> {summary.patient.medicalHistory?.join(", ") || "None"}</p>
       </div>
+
+      {/* Symptoms Reported */}
       <div className="bg-gray-100 p-4 rounded-lg mb-4">
         <h3 className="font-bold mb-2 font-heading">Symptoms Reported</h3>
-        <p>
-          <strong>Primary Symptoms:</strong>{" "}
-          {summary.symptoms.map((s) => s.symptoms.join(", ")).join("; ")}
-        </p>
-        <p>
-          <strong>Duration:</strong>{" "}
-          {summary.symptoms.map((s) => s.duration).join(", ")}
-        </p>
-        <p>
-          <strong>Pain Level:</strong>{" "}
-          {summary.symptoms.map((s) => s.severity).join(", ")}/10
-        </p>
-        <p>
-          <strong>Additional Details:</strong>{" "}
-          {summary.symptoms.map((s) => s.additionalDetails).join(", ")}
-        </p>
+        {summary.symptoms.map((s, index) => (
+          <div key={index} className="mb-2">
+            <p><strong>Primary Symptoms:</strong> {s.symptoms.join(", ")}</p>
+            <p><strong>Duration:</strong> {s.duration}</p>
+            <p><strong>Pain Level:</strong> {s.severity}/10</p>
+            {s.additionalDetails && <p><strong>Additional Details:</strong> {s.additionalDetails}</p>}
+          </div>
+        ))}
       </div>
-      <div className="bg-gray-100 p-4 rounded-lg mb-4">
+
+      {/* Risk Assessment */}
+      <div className="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 mb-4">
         <h3 className="font-bold mb-2 font-heading">Risk Assessment</h3>
-        <p className="capitalize">
-          <strong>{summary.riskAssessment?.level} Risk</strong>
-        </p>
-        <ul className="list-disc list-inside">
+        <p className="capitalize"><strong>Level:</strong> {summary.riskAssessment?.level} Risk</p>
+        <p><strong>Factors:</strong></p>
+        <ul className="list-disc list-inside ml-4">
           {summary.riskAssessment?.factors.map((factor, index) => (
             <li key={index}>{factor}</li>
           ))}
         </ul>
       </div>
-      <div className="bg-gray-100 p-4 rounded-lg mb-4">
+
+      {/* Recommendations */}
+      <div className="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-4">
         <h3 className="font-bold mb-2 font-heading">Recommendations</h3>
-        <ul className="list-disc list-inside">
+        <ul className="list-disc list-inside ml-4">
           {summary.recommendations?.map((rec, index) => (
             <li key={index}>{rec}</li>
           ))}
         </ul>
       </div>
-      <div className="bg-gray-100 p-4 rounded-lg mb-4">
+
+      {/* Next Actions */}
+      <div className="bg-blue-100 border-l-4 border-blue-500 text-blue-700 p-4 mb-4">
         <h3 className="font-bold mb-2 font-heading">Next Actions</h3>
-        <ul className="list-disc list-inside">
+        <ul className="list-disc list-inside ml-4">
           {summary.nextActions?.map((action, index) => (
             <li key={index}>{action}</li>
           ))}
         </ul>
       </div>
-      <div className="bg-gray-100 p-4 rounded-lg mb-4">
+
+      {/* Consultation Time */}
+      <div className="bg-gray-100 p-4 rounded-lg mb-4 text-sm text-gray-600">
         <p>
           <strong>Consultation Time:</strong>{" "}
           {new Date(summary.createdAt!).toLocaleString()} (Duration:{" "}
           {summary.consultationDuration} minutes)
         </p>
       </div>
-      <div className="flex justify-between mt-8">
+
+      {/* Action Buttons */}
+      <div className="flex flex-col md:flex-row justify-between mt-8">
         <button
           onClick={prevStep}
-          className="bg-gray-300 text-black px-4 py-2 rounded-lg font-body"
+          className="bg-gray-300 text-black px-4 py-2 rounded-lg font-body w-full md:w-auto mb-2 md:mb-0"
         >
           Back
         </button>
-        <div>
+        <div className="flex flex-col md:flex-row">
           <button
             onClick={() => window.print()}
-            className="bg-blue-500 text-white px-4 py-2 rounded-lg mr-2 font-body"
+            className="bg-blue-500 text-white px-4 py-2 rounded-lg md:mr-2 font-body mb-2 md:mb-0"
           >
             Print/Save Summary
           </button>

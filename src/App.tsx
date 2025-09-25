@@ -22,7 +22,7 @@ const App = () => {
     severity: 0,
     additionalDetails: "",
   });
-  const [followUpsData, setFollowUpsData] = useState<IFollowUp[]>([]);
+  const [_followUpsData, setFollowUpsData] = useState<IFollowUp[]>([]);
   const [consultationId, setConsultationId] = useState<string | null>(null);
 
   const nextStep = () => setStep(step + 1);
@@ -37,44 +37,8 @@ const App = () => {
         <p>Healthcare Assistant Guided Triage</p>
       </header>
       <main className="p-8">
-        <div className="max-w-4xl mx-auto bg-white rounded-lg shadow-md p-8">
-          <div className="flex justify-between mb-8">
-            <div
-              className={`w-1/5 text-center p-2 rounded-lg ${
-                step === 1 ? "bg-blue-500 text-white" : "bg-gray-200"
-              }`}
-            >
-              <span className="font-heading">Intro</span>
-            </div>
-            <div
-              className={`w-1/5 text-center p-2 rounded-lg ${
-                step === 2 ? "bg-blue-500 text-white" : "bg-gray-200"
-              }`}
-            >
-              <span className="font-heading">Patient Info</span>
-            </div>
-            <div
-              className={`w-1/5 text-center p-2 rounded-lg ${
-                step === 3 ? "bg-blue-500 text-white" : "bg-gray-200"
-              }`}
-            >
-              <span className="font-heading">Symptoms</span>
-            </div>
-            <div
-              className={`w-1/5 text-center p-2 rounded-lg ${
-                step === 4 ? "bg-blue-500 text-white" : "bg-gray-200"
-              }`}
-            >
-              <span className="font-heading">Follow-ups</span>
-            </div>
-            <div
-              className={`w-1/5 text-center p-2 rounded-lg ${
-                step === 5 ? "bg-blue-500 text-white" : "bg-gray-200"
-              }`}
-            >
-              <span className="font-heading">Summary</span>
-            </div>
-          </div>
+        <div className="max-w-4xl mx-auto bg-white rounded-lg shadow-md p-4 md:p-8">
+          
           {step === 1 && <Introduction nextStep={nextStep} />}
           {step === 2 && (
             <PatientInfo

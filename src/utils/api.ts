@@ -1,7 +1,7 @@
 
 import axios from "axios";
 
-const API_URL = "http://localhost:5000/api";
+const API_URL = "https://e-likita-backend-eedl.onrender.com/api";
 
 export const createPatient = async (patientData: any) => {
   console.log(patientData)

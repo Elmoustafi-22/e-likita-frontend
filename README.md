@@ -1,15 +1,17 @@
 # e-Likita Frontend
 
-e-Likita is a web-based hospital consultation assistant that guides patients through a multi-step triage process. Built with React, TypeScript, and Vite, it assesses symptoms, provides risk evaluation, and offers personalized healthcare recommendations. The application features a user-friendly interface and generates a printable summary for patient records.
+e-Likita is a web-based hospital consultation assistant that guides patients through a multi-step triage process. Built with React, TypeScript, and Vite, it assesses symptoms, provides risk evaluation, and offers personalized healthcare recommendations. The application features a user-friendly, responsive interface and generates a printable summary for patient records.
 
 ## Features
 
-*   **Guided Consultation:** A 5-step process to collect patient information and symptoms.
+*   **Guided Consultation:** A 5-step process with a visual stepper to track progress.
+*   **AI-Powered Recommendations:** Connects to an AI-powered backend to generate intelligent risk assessments and care recommendations based on the patient's symptoms and data.
 *   **Symptom Assessment:** Allows users to select from a list of common symptoms.
 *   **Urgency Detection:** Identifies urgent symptoms and advises immediate medical attention.
-*   **Follow-up Questions:** Asks relevant follow-up questions based on selected symptoms.
-*   **Consultation Summary:** Displays a comprehensive summary of the consultation, including patient information, symptoms, risk assessment, and recommendations.
+*   **Dynamic Follow-up Questions:** Asks relevant, symptom-specific follow-up questions based on user input.
+*   **Consultation Summary:** Displays a comprehensive summary of the consultation, including patient information, symptoms, AI-generated risk assessment, and recommendations.
 *   **Printable Summary:** Allows users to print or save the consultation summary.
+*   **Responsive Design:** Fully responsive interface that works on both desktop and mobile devices.
 
 ## Getting Started
 
@@ -56,6 +58,7 @@ e-likita-frontend/
 │   │   ├── FollowUps.tsx
 │   │   ├── Introduction.tsx
 │   │   ├── PatientInfo.tsx
+│   │   ├── Stepper.tsx
 │   │   ├── Summary.tsx
 │   │   └── Symptoms.tsx
 │   ├── types/

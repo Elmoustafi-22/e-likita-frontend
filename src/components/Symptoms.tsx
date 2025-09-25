@@ -1,6 +1,7 @@
 import { useState } from "react";
 import type { ISymptom } from "../types";
 import { FaExclamationTriangle } from "react-icons/fa";
+import Stepper from "./Stepper";
 
 interface SymptomsProps {
   nextStep: () => void;
@@ -8,6 +9,14 @@ interface SymptomsProps {
   symptomsData: ISymptom;
   setSymptomsData: (data: ISymptom) => void;
 }
+
+const steps = [
+  "Introduction",
+  "Patient Info",
+  "Symptoms",
+  "Follow-up",
+  "Summary",
+];
 
 const Symptoms = ({
   nextStep,
@@ -80,6 +89,7 @@ const Symptoms = ({
 
   return (
     <div className="font-body">
+      <Stepper currentStep={3} steps={steps} />
       <h2 className="text-2xl font-bold mb-4 font-heading">
         Symptom Assessment
       </h2>
@@ -90,7 +100,7 @@ const Symptoms = ({
           <p className="text-red-600 font-bold font-body">{urgencyMessage}</p>
         </div>
       )}
-      <div className="grid grid-cols-2 gap-4 font-body">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 font-body">
         {symptomsList.map((symptom) => (
           <div key={symptom} className="flex items-center">
             <input
@@ -147,10 +157,10 @@ const Symptoms = ({
           className="w-full p-2 border rounded-lg font-body"
         ></textarea>
       </div>
-      <div className="flex justify-between mt-8">
+      <div className="flex flex-col md:flex-row justify-between mt-8">
         <button
           onClick={prevStep}
-          className="bg-gray-300 text-black px-4 py-2 rounded-lg font-body"
+          className="bg-gray-300 text-black px-4 py-2 rounded-lg font-body mb-2 md:mb-0"
         >
           Back
         </button>
