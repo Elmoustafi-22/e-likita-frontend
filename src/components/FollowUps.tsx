@@ -86,6 +86,7 @@ const FollowUps = ({
 }: FollowUpsProps) => {
   const [followUpAnswers, setFollowUpAnswers] = useState<Record<string, Record<string, string>>>({});
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const relevantSymptoms = symptomsData.symptoms?.filter(symptom => followUpConfig[symptom]) || [];
 
@@ -100,6 +101,7 @@ const FollowUps = ({
   };
 
   const handleNext = async () => {
+    setError(null);
     setLoading(true);
 
     const formattedFollowUps = Object.entries(followUpAnswers).map(([symptom, answers]) => {
@@ -135,8 +137,9 @@ const FollowUps = ({
       const consultation = await createConsultation(consultationData);
       setConsultationId(consultation._id);
       nextStep();
-    } catch (error) {
-      console.error("Failed to create consultation", error);
+    } catch (err) {
+      console.error("Failed to create consultation", err);
+      setError("A network error occurred. Please check your connection and try again.");
     } finally {
       setLoading(false);
     }
@@ -152,6 +155,12 @@ const FollowUps = ({
       <Stepper currentStep={4} steps={steps} />
       <h2 className="text-2xl font-bold mb-4 font-heading">Follow-up Questions</h2>
       
+      {error && (
+        <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-4" role="alert">
+          <p>{error}</p>
+        </div>
+      )}
+
       {loading ? (
         <div className="flex flex-col items-center justify-center p-8">
           <div className="w-12 h-12 border-4 border-t-blue-500 border-gray-200 rounded-full animate-spin"></div>
@@ -175,6 +184,7 @@ const FollowUps = ({
                               type="radio"
                               name={`${config.title}-${q.key}`}
                               value={option}
+                              checked={followUpAnswers[config.title]?.[q.key] === option}
                               onChange={(e) => handleAnswerChange(config.title, q.key, e.target.value)}
                               className="mr-2"
                             />
