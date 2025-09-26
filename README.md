@@ -13,6 +13,20 @@ e-Likita is a web-based hospital consultation assistant that guides patients thr
 *   **Printable Summary:** Allows users to print or save the consultation summary.
 *   **Responsive Design:** Fully responsive interface that works on both desktop and mobile devices.
 
+## Screenshots
+
+| Introduction | Patient Information |
+| :---: | :---: |
+| ![Introduction Page](./screenshots/Introduction.png) | ![Patient Info Page](./screenshots/Patient-info.png) |
+
+| Symptoms Assessment | Follow-up Questions |
+| :---: | :---: |
+| ![Symptoms Page](./screenshots/Symptoms.png) | ![Follow-ups Page](./screenshots/Follow-ups.png) |
+
+| Consultation Summary |
+| :---: |
+| ![Summary Page](./screenshots/Summary.png) |
+
 ## Getting Started
 
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
