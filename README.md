@@ -17,15 +17,15 @@ e-Likita is a web-based hospital consultation assistant that guides patients thr
 
 | Introduction | Patient Information |
 | :---: | :---: |
-| ![Introduction Page](./screenshots/Introduction.png) | ![Patient Info Page](./screenshots/Patient-info.png) |
+| ![Introduction Page](./screenshots/introduction.png) | ![Patient Info Page](./screenshots/patient-info.png) |
 
 | Symptoms Assessment | Follow-up Questions |
 | :---: | :---: |
-| ![Symptoms Page](./screenshots/Symptoms.png) | ![Follow-ups Page](./screenshots/Follow-ups.png) |
+| ![Symptoms Page](./screenshots/symptoms.png) | ![Follow-ups Page](./screenshots/follow-ups.png) |
 
 | Consultation Summary |
 | :---: |
-| ![Summary Page](./screenshots/Summary.png) |
+| ![Summary Page](./screenshots/summary.png) |
 
 ## Getting Started
 
