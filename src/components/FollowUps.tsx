@@ -137,9 +137,10 @@ const FollowUps = ({
       const consultation = await createConsultation(consultationData);
       setConsultationId(consultation._id);
       nextStep();
-    } catch (err) {
+    } catch (err: any) {
       console.error("Failed to create consultation", err);
-      setError("A network error occurred. Please check your connection and try again.");
+      const errorMessage = err?.response?.data?.message || "A network error occurred. Please check your connection and try again.";
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
